@@ -42,15 +42,17 @@ background = GameSprite("src/galaxy.jpg", 0, 0, WIN_W, WIN_H)
 sprite1 = Player('src/rocket.png', (WIN_W - HERO_W)/2, WIN_H - HERO_H, HERO_W, HERO_H)
 ufos = sprite.Group()
 for i in range(UFOS):
-    kaneki = Enemy('src/ufo.png', x3, y3, UFO_W, UFO_H)
+    kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
     ufos.add(kaneki)
 #соединение размера и загрузка картинки
 close = Label(200, 350, 120, 50, RED)
 again = Label(200, 250, 120, 50)
 close.set_text('закрыть')
 again.set_text('гоуууу')
-co = Enemy('src/социализация.jpg', 0, 0, 500, 500, 1)
-
+co = Enemy('src/социализация.jpg', 0, 0, 500, 500, 1, CO_XP)
+co.rect.x = -500
+co.rect.y = -200 
+is_co = False 
 # игровой цикл
 finish = True
 game = True
@@ -84,7 +86,7 @@ while game:
             display.update() 
             time.delay(100)   
             sprite1.xp -= 1 
-            kaneki = Enemy('src/ufo.png', x3, y3, UFO_W, UFO_H)
+            kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
             ufos.add(kaneki)        
             
         doza_vs_ufo = sprite.groupcollide(
@@ -93,9 +95,19 @@ while game:
 
 
         for c in doza_vs_ufo:
-            kaneki = Enemy('src/ufo.png', x3, y3, UFO_W, UFO_H)
+            kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
             ufos.add(kaneki)  
             sprite1.killed += 1  
+        co_vs_bulingi = sprite.spritecollide(
+            co, sprite1.bulingi, True
+        )
+        if co_vs_bulingi:
+            print(co.xp)
+            co.xp -= 1
+            if co.xp <= 0:
+                rounds += 1  
+                game = False
+
 
         if sprite1.xp <= 0 or sprite1.skip >= MAX_SKIP:
             window.blit(lost, (50, 200))
@@ -104,8 +116,12 @@ while game:
         if sprite1.killed >= VICTORY:
             window.blit(win, (100, 200))
             rounds += 1
-            if rounds >= 3:
+            if rounds >= ROUNDS:
+                if not is_co:
+                    co.rect.x = 100   
+                    is_co = True
                 co.draw(window)
+                co.update(sprite1)
             else:
                 finish = True
         
@@ -122,7 +138,7 @@ while game:
         sprite1 = Player('src/rocket.png', (WIN_W - HERO_W)/2, WIN_H - HERO_H, HERO_W, HERO_H)
         ufos = sprite.Group()
         for i in range(UFOS):
-            kaneki = Enemy('src/ufo.png', x3, y3, UFO_W, UFO_H)
+            kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
             ufos.add(kaneki)
 
 
