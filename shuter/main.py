@@ -44,6 +44,11 @@ ufos = sprite.Group()
 for i in range(UFOS):
     kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
     ufos.add(kaneki)
+
+rocks = sprite.Group()
+for i in range(ROCKS):
+    kaneki = Enemy('src/asteroid.png', 0, 0, UFO_W, UFO_W)
+    rocks.add(kaneki)
 #соединение размера и загрузка картинки
 close = Label(200, 350, 120, 50, RED)
 again = Label(200, 250, 120, 50)
@@ -69,25 +74,32 @@ while game:
         window.blit(xp, (10, 70))
         sprite1.draw(window)
         ufos.draw(window)
+        rocks.draw(window)
         sprite1.bulingi.draw(window)
         #kaneki.update(x3, y3, x3 + 100, x3 + 175, y3 + 50)
 
 
         sprite1.update(K_a, K_d)
         ufos.update(sprite1)
+        rocks.update(sprite1, True)
         sprite1.bulingi.update()
         sprite_vs_ufo = sprite.spritecollide(
             sprite1, ufos, True
+        )        
+        sprite_vs_rocks = sprite.spritecollide(
+            sprite1, rocks, True
         )
 
-        if sprite_vs_ufo:
+
+        if sprite_vs_ufo or sprite_vs_rocks:
             oh_god_damn.play()
             #смэрть.draw(window)
             display.update() 
-            time.delay(100)   
-            sprite1.xp -= 1 
-            kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
-            ufos.add(kaneki)        
+            time.delay(100)
+            if sprite_vs_ufo:
+                sprite1.xp -= 1 
+                kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
+                ufos.add(kaneki)        
             
         doza_vs_ufo = sprite.groupcollide(
             sprite1.bulingi, ufos, True, True
@@ -109,7 +121,7 @@ while game:
                 game = False
 
 
-        if sprite1.xp <= 0 or sprite1.skip >= MAX_SKIP:
+        if sprite1.xp <= 0 or sprite1.skip >= MAX_SKIP or sprite_vs_rocks:
             window.blit(lost, (50, 200))
             finish = True        
             
@@ -134,13 +146,18 @@ while game:
             ufo.kill()
         for buling in sprite1.bulingi:
             buling.kill()
+        for rock in rocks:
+            rock.kill()
         sprite1.kill()
         sprite1 = Player('src/rocket.png', (WIN_W - HERO_W)/2, WIN_H - HERO_H, HERO_W, HERO_H)
         ufos = sprite.Group()
         for i in range(UFOS):
             kaneki = Enemy('src/ufo.png', 0, 0, UFO_W, UFO_H)
             ufos.add(kaneki)
-
+        rocks = sprite.Group()
+        for i in range(ROCKS):
+            kaneki = Enemy('src/asteroid.png', 0, 0, UFO_W, UFO_W)
+            rocks.add(kaneki)
 
 
             
